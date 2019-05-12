@@ -77,14 +77,15 @@ class MopidyAPI:
                      json=rpcjson).json()
 
             # assert: no errors :^)
-            assert 'error' not in r, r.get('error', None)
+            err = r.get('error', {}).get('data', {}).get('message')
+            assert 'error' not in r, err
 
             # dict -> namedtuples and return
             return deserialize_mopidy(r['result'])
 
         # a whole bunch of error handling
         except AssertionError as ex:
-            err = f"Mopidy error: {ex['data']['message']}"
+            err = f"Mopidy error: {ex}"
             self.logger.error(err)
         except ConnectionError as ex:
             err = f"Mopidy connection error: {ex} {helpstr}"
