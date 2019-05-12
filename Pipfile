@@ -5,6 +5,7 @@ verify_ssl = true
 
 [dev-packages]
 docopt = "*"
+jinja2 = "*"
 
 [packages]
 websockets = "*"

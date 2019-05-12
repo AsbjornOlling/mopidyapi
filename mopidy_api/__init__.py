@@ -1,5 +1,5 @@
 
-__all__ = ['search', 'types', 'connection', 'playlist']
+__all__ = ['client', 'wsclient', 'mopidy_types']
 
-from .connection import mopidy_post
+from .client import MopidyClient
 from .wsclient import MopidyWSClient

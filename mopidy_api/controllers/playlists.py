@@ -3,11 +3,13 @@ This file was generated programatically,
 based on JSON describing all available methods.
 """
 
-from .connection import 
 
+class PlaylistsController:
+    def __init__(self, client):
+        self.client = client
 
-def save():
-    """ Save the playlist.
+    def save(self, *args, **kwargs):
+        """ Save the playlist.
     
     For a playlist to be saveable, it must have the ``uri`` attribute set.
     You must not set the ``uri`` atribute yourself, but use playlist
@@ -26,10 +28,10 @@ def save():
     :param playlist: the playlist
     :type playlist: :class:`mopidy.models.Playlist`
     :rtype: :class:`mopidy.models.Playlist` or :class:`None` """
+        return self.client.rpc_call('core.playlists.save', *args, **kwargs)
 
-
-def get_playlists():
-    """ Get the available playlists.
+    def get_playlists(self, *args, **kwargs):
+        """ Get the available playlists.
     
     :rtype: list of :class:`mopidy.models.Playlist`
     
@@ -40,10 +42,10 @@ def get_playlists():
     
     .. deprecated:: 1.0
         Use :meth:`as_list` and :meth:`get_items` instead. """
+        return self.client.rpc_call('core.playlists.get_playlists', *args, **kwargs)
 
-
-def refresh():
-    """ Refresh the playlists in :attr:`playlists`.
+    def refresh(self, *args, **kwargs):
+        """ Refresh the playlists in :attr:`playlists`.
     
     If ``uri_scheme`` is :class:`None`, all backends are asked to refresh.
     If ``uri_scheme`` is an URI scheme handled by a backend, only that
@@ -52,19 +54,19 @@ def refresh():
     
     :param uri_scheme: limit to the backend matching the URI scheme
     :type uri_scheme: string """
+        return self.client.rpc_call('core.playlists.refresh', *args, **kwargs)
 
-
-def lookup():
-    """ Lookup playlist with given URI in both the set of playlists and in any
+    def lookup(self, *args, **kwargs):
+        """ Lookup playlist with given URI in both the set of playlists and in any
     other playlist sources. Returns :class:`None` if not found.
     
     :param uri: playlist URI
     :type uri: string
     :rtype: :class:`mopidy.models.Playlist` or :class:`None` """
+        return self.client.rpc_call('core.playlists.lookup', *args, **kwargs)
 
-
-def delete():
-    """ Delete playlist identified by the URI.
+    def delete(self, *args, **kwargs):
+        """ Delete playlist identified by the URI.
     
     If the URI doesn't match the URI schemes handled by the current
     backends, nothing happens.
@@ -77,10 +79,10 @@ def delete():
     
     .. versionchanged:: 2.2
         Return type defined. """
+        return self.client.rpc_call('core.playlists.delete', *args, **kwargs)
 
-
-def create():
-    """ Create a new playlist.
+    def create(self, *args, **kwargs):
+        """ Create a new playlist.
     
     If ``uri_scheme`` matches an URI scheme handled by a current backend,
     that backend is asked to create the playlist. If ``uri_scheme`` is
@@ -95,18 +97,18 @@ def create():
     :param uri_scheme: use the backend matching the URI scheme
     :type uri_scheme: string
     :rtype: :class:`mopidy.models.Playlist` or :class:`None` """
+        return self.client.rpc_call('core.playlists.create', *args, **kwargs)
 
-
-def get_uri_schemes():
-    """ Get the list of URI schemes that support playlists.
+    def get_uri_schemes(self, *args, **kwargs):
+        """ Get the list of URI schemes that support playlists.
     
     :rtype: list of string
     
     .. versionadded:: 2.0 """
+        return self.client.rpc_call('core.playlists.get_uri_schemes', *args, **kwargs)
 
-
-def get_items():
-    """ Get the items in a playlist specified by ``uri``.
+    def get_items(self, *args, **kwargs):
+        """ Get the items in a playlist specified by ``uri``.
     
     Returns a list of :class:`~mopidy.models.Ref` objects referring to the
     playlist's items.
@@ -117,10 +119,10 @@ def get_items():
     :rtype: list of :class:`mopidy.models.Ref`, or :class:`None`
     
     .. versionadded:: 1.0 """
+        return self.client.rpc_call('core.playlists.get_items', *args, **kwargs)
 
-
-def filter():
-    """ Filter playlists by the given criterias.
+    def filter(self, *args, **kwargs):
+        """ Filter playlists by the given criterias.
     
     Examples::
     
@@ -139,10 +141,10 @@ def filter():
     
     .. deprecated:: 1.0
         Use :meth:`as_list` and filter yourself. """
+        return self.client.rpc_call('core.playlists.filter', *args, **kwargs)
 
-
-def as_list():
-    """ Get a list of the currently available playlists.
+    def as_list(self, *args, **kwargs):
+        """ Get a list of the currently available playlists.
     
     Returns a list of :class:`~mopidy.models.Ref` objects referring to the
     playlists. In other words, no information about the playlists' content
@@ -151,4 +153,4 @@ def as_list():
     :rtype: list of :class:`mopidy.models.Ref`
     
     .. versionadded:: 1.0 """
-
+        return self.client.rpc_call('core.playlists.as_list', *args, **kwargs)

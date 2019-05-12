@@ -18,6 +18,7 @@ class MopidyWSClient:
     def __init__(self, ws_url='localhost:6680', logger=None):
         # typical, boring constructor stuff
         self.logger = logger if logger else logging.getLogger(__name__)
+        self.ws_url = ws_url
         self._event_callbacks = {}
 
         # start websocket listener in a separate thread

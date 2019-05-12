@@ -7,7 +7,15 @@ from requests import post
 
 # app
 from .wsclient import MopidyWSClient
-from . import controllers
+from .mopidy_types import deserialize_mopidy
+from .controllers import (
+    history,
+    library,
+    mixer,
+    playback,
+    playlists,
+    tracklist
+)
 
 # exceptions
 from json.decoder import JSONDecodeError
@@ -28,7 +36,13 @@ class MopidyClient:
         self.http_url = f'http://{addr}/mopidy/rpc'
         self.ws_url = f'ws://{addr}/mopidy/ws'
 
-        # TODO: get controller methods
+        # load controllers (which encapsulate rpc methods)
+        self.history = history.HistoryController(self)
+        self.library = library.LibraryController(self)
+        self.mixer = mixer.MixerController(self)
+        self.playback = playback.PlaybackController(self)
+        self.playlists = playlists.PlaylistController(self)
+        self.tracklist = tracklist.TracklistController(self)
 
         if use_websocket:
             # start websocket connection, and borrow a decorator

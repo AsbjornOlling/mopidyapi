@@ -54,7 +54,7 @@ def render_code(name, methods, template=None, outdir=None):
     """ Render code with Jinja2, then write to file. """
     assert template is not None, "Keyword argument 'template' must be set."
     assert outdir is not None, "Keyword argument 'outdir' must be set."
-    code = template.render(methods=methods)
+    code = template.render(name=name, methods=methods)
 
     # write to file
     assert Path(outdir).is_dir(), f"{outdir} is not a directory."
