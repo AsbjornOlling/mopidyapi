@@ -7,7 +7,7 @@ from requests import post
 
 # app
 from .wsclient import MopidyWSClient
-from .mopidy_types import deserialize_mopidy
+from .parsedata import deserialize_mopidy
 from .controllers import (
     history,
     library,

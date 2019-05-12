@@ -10,7 +10,7 @@ from collections import namedtuple
 import websockets
 
 # app imports
-from .mopidy_types import deserialize_mopidy
+from .parsedata import deserialize_mopidy
 
 
 class MopidyWSClient:
