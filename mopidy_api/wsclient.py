@@ -10,23 +10,17 @@ from collections import namedtuple
 import websockets
 
 # app imports
-from mopidy_types import deserialize_mopidy
+from .mopidy_types import deserialize_mopidy
 
 
 class MopidyWSClient:
     """ Mopidy Websocket API Client """
-    def __init__(self, ws_url='ws://localhost:6680/mopidy/ws',
-                 logger=None):
+    def __init__(self, ws_url='localhost:6680', logger=None):
         # typical, boring constructor stuff
         self.logger = logger if logger else logging.getLogger(__name__)
-        self.ws_url = ws_url
         self._event_callbacks = {}
 
-        # check schema
-        err = f"{ws_url} doesn't look like a websocket address."
-        assert 'wss://' or 'ws://' in ws_url, err
-
-        # start websocket listener thread
+        # start websocket listener in a separate thread
         self.logger.info("Creating Mopidy Websocket connection...")
         self.wsthread = Thread(target=self._websocket_runner,
                                args=(asyncio.new_event_loop(),),
@@ -42,7 +36,7 @@ class MopidyWSClient:
             async with websockets.connect(self.ws_url) as ws:
                 while True:
                     msg = await ws.recv()
-                    self.on_message(msg)
+                    self._on_message(msg)
 
         # run listener forever, reconnect on exceptions
         while True:
@@ -53,15 +47,15 @@ class MopidyWSClient:
                 self.logger.warning(
                     f"Websocket connection error (reconnecting): {e}")
 
-    def on_message(self, msgstr: str):
+    def _on_message(self, msgstr: str):
         """ Method to be called on every arriving websocket message. """
         msg = json.loads(msgstr)
         if 'event' in msg.keys():
-            self.route_event(msg)
+            self._route_event(msg)
         else:
             self.logger.debug(f"Received unknown type packet: {msg}")
 
-    def route_event(self, event: dict):
+    def _route_event(self, event: dict):
         """ Pass event data to the functions registered
         in the _event_callbacks dict.
         """
@@ -76,9 +70,9 @@ class MopidyWSClient:
             cb(neatdata)
 
     def on_event(self, event: str):
-        """ Function decorator.
+        """ Function decorator, to listen for events.
         Decorated function is added to callbacks dict,
-        to be called when event arrives.
+        to be called when specified event arrives.
         TODO: check for invalid/unsupported event names
         """
         cbs = self._event_callbacks
