@@ -10,9 +10,6 @@ the named tuples.
 from collections import namedtuple
 from typing import Dict, List
 
-# deps
-from loguru import logger
-
 # mopidy json object types
 Track = namedtuple(
     'Track',
@@ -76,4 +73,4 @@ def deserialize_mopidy(data):
         # strings, ints, and None should be the only primitives here
         return data
     else:
-        logger.error(f"Uncaught type: {type(data)}")
+        raise ValueError(f"Uncaught type: {type(data)}")

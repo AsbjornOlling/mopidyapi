@@ -23,18 +23,19 @@ from requests.exceptions import ConnectionError
 
 
 class MopidyClient:
-    """ Mopidy Client.
+    """ Mopidy API Client.
     Capable of doing Mopidy RPC calls using http,
     and starts an instance of MopidyWSClient to listen
     for events.
     """
-    def __init__(self, addr='localhost:6680', use_websocket=True, logger=None):
+    def __init__(self, host='localhost', port=6680,
+                 use_websocket=True, logger=None):
         # boring constructor stuff
         self.logger = logger if logger else logging.getLogger(__name__)
 
         # get rpc addresses
-        self.http_url = f'http://{addr}/mopidy/rpc'
-        self.ws_url = f'ws://{addr}/mopidy/ws'
+        self.http_url = f'http://{host}:{port}/mopidy/rpc'
+        self.ws_url = f'ws://{host}:{port}/mopidy/ws'
 
         # load controllers (which encapsulate rpc methods)
         self.history = history.HistoryController(self)
