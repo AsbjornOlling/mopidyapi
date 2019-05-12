@@ -41,7 +41,7 @@ class MopidyClient:
         self.library = library.LibraryController(self)
         self.mixer = mixer.MixerController(self)
         self.playback = playback.PlaybackController(self)
-        self.playlists = playlists.PlaylistController(self)
+        self.playlists = playlists.PlaylistsController(self)
         self.tracklist = tracklist.TracklistController(self)
 
         if use_websocket:
