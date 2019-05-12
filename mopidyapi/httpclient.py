@@ -22,7 +22,7 @@ from json.decoder import JSONDecodeError
 from requests.exceptions import ConnectionError
 
 
-class MopidyClient:
+class MopidyAPI:
     """ Mopidy API Client.
     Capable of doing Mopidy RPC calls using http,
     and starts an instance of MopidyWSClient to listen
@@ -84,7 +84,7 @@ class MopidyClient:
 
         # a whole bunch of error handling
         except AssertionError as ex:
-            err = f"Mopidy error: {ex}"
+            err = f"Mopidy error: {ex['data']['message']}"
             self.logger.error(err)
         except ConnectionError as ex:
             err = f"Mopidy connection error: {ex} {helpstr}"
