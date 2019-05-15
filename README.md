@@ -7,6 +7,8 @@ API](https://docs.mopidy.com/en/latest/api/http/).
 
 `MopidyAPI` uses HTTP to call RPC methods, and websockets to listen for events.
 
+It is compatible with all functions present in Mopidy 2.2.
+
 ## Installation
 
 ```
@@ -46,6 +48,7 @@ For example `mopidy.core.PlaybackController.pause()` in the documentation maps t
 	 'bitrate')
 ```
 
+
 ### Connecting to Mopidy
 
 Instantiate a `MopidyAPI` object.
@@ -54,16 +57,29 @@ so you might not need to give the constructor any arguments.
 
 ```python
 from mopidyapi import MopidyAPI
-m = MopidyAPI(host='my.mopidy.host', port=6680)
+m = MopidyAPI(host='my.mopidy.host.com', port=6680)
 ```
 
 You can also pass `use_websockets=False`, to prevent starting the websocket listener,
 which runs in a separate thread. However, event listening (described below) won't work with this set.
 
+
+### Calling RPC methods
+
+All of the functions described in the
+[Mopidy 2.2 core API documentation](http://docs.mopidy.com/en/latest/api/core/)
+are available in `MopidyAPI`.
+
+For example, you can pause the music by calling `m.playback.pause()` (where `m = MopidyAPI()`).
+
+Functions will generally return python native [`namedtuple`](https://docs.python.org/3.7/library/collections.html#collections.namedtuple)
+representations of the returned data. 
+
+
 ### Event listening
 
 You can use function decorators to mark specific functions to be called when an event arrives.
-The events used are described in the [core events docs.](https://docs.mopidy.com/en/latest/api/core/#core-events)
+The events used are described in [Mopidy's core events documentation.](https://docs.mopidy.com/en/latest/api/core/#core-events)
 
 ```python
 from mopidyapi import MopidyAPI
