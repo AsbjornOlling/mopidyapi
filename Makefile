@@ -1,6 +1,12 @@
 
 CODEGEN_DIR=./codegen
 
+build:
+	flit build
+
+install: build
+	flit install
+
 gen-controller-code:
 	# run from git repo root
 	pipenv run \

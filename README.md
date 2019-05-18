@@ -64,21 +64,27 @@ You can also pass `use_websockets=False`, to prevent starting the websocket list
 which runs in a separate thread. However, event listening (described below) won't work with this set.
 
 
-### Calling RPC methods
+### Calling Mopidy functions
 
 All of the functions described in the
 [Mopidy 2.2 core API documentation](http://docs.mopidy.com/en/latest/api/core/)
 are available in `MopidyAPI`.
 
-For example, you can pause the music by calling `m.playback.pause()` (where `m = MopidyAPI()`).
+Functions named in the Mopidy docs as `core.<ControllerName>Controller.<functionname>()`,
+will be under the name `MopidyAPI.<controllername>.<functionname>()`
 
-Functions will generally return python native [`namedtuple`](https://docs.python.org/3.7/library/collections.html#collections.namedtuple)
-representations of the returned data. 
+For example, you can pause the music by calling `m.playback.pause()`,
+or you could add a song by calling e.g. `m.tracklist.add(artist='Rick Astley')`(where `m = MopidyAPI()`).
+
+Functions will return
+[Python native `namedtuple`](https://docs.python.org/3.7/library/collections.html#collections.namedtuple)
+representations of the returned data.
 
 
 ### Event listening
 
-You can use function decorators to mark specific functions to be called when an event arrives.
+You can use function decorators to mark specific functions to be called when an event arrives. See example below.
+
 The events used are described in [Mopidy's core events documentation.](https://docs.mopidy.com/en/latest/api/core/#core-events)
 
 ```python
@@ -86,14 +92,54 @@ from mopidyapi import MopidyAPI
 m = MopidyAPI()
 
 @m.on_event('volume_changed')
-def on_volume_changed(event):
-	print('event')
+def print_volume(event):
+    print(f"Volume changed to: {event.volume}")
+
+@m.on_event('track_playback_started')
+def print_newtracks(event):
+    print(f"Started playing track: {track.}")
 
 ```
+
+Like with function calls, the events passed are [namedtuples.](https://docs.python.org/3.7/library/collections.html#collections.namedtuple)
+
+## Note on the choice of `namedtuple`s
+
+### Why `namedtuples`?
+
+The choice of namedtuples might seem unusual (or even inconvenient),
+but they have a number of advantages over `dict`s for this application:
+
+**1. Less verbose than dicts.**
+
+`event.tl_track.track.album.name`
+is shorter and easier on the eyes than 
+`event['tl_track']['track']['album']['name']`
+
+**2. They print much more neatly.**
+
+`Artist(name='Death Grips', uri='spotify:artist:5RADpgYLOuS2ZxDq7ggYYH')` is much better than `{'name': 'Death Grips', 'uri': 'spotify:artist:5RADpgYLOuS2ZxDq7ggYYH'}`.
+
+**3. `namedtuple`s accurately represent the immutable nature of the data.**
+
+Being allowed to mutate the data coming from Mopidy might give one the idea that this would change the data inside Mopidy, which is obviously not the case.
+
+
+### ...but, I know dicts!
+
+Okay, so if you need `.keys()`, you can use `._fields()` instead,
+and if you absolutely need a dict, you can use `._asdict()`,
+will return an actual dict.
+
+
+## Contributing
+
+Please do tell me bout bugs via the [github issue tracker](https://github.com/AsbjornOlling/mopidyapi).
+
+Also feel free to write, if you're just in the mood to help me improve this project. I don't bite :)
 
 
 ## License
 
 This project is licensed under the GPLv3.
 See the `LICENSE` file for details.
-
