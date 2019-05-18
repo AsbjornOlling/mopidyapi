@@ -8,6 +8,7 @@ from requests import post
 # app
 from .wsclient import MopidyWSClient
 from .parsedata import deserialize_mopidy
+from .exceptions import MopidyError
 from .controllers import (
     history,
     library,
@@ -57,8 +58,6 @@ class MopidyAPI:
         Response JSON is deserialized into namedtuples
         before returning.
         """
-        helpstr = ("Check that is set right "
-                   "and that Mopidy is running and accessible.")
 
         # assemble rpc command
         rpcjson = {'jsonrpc': '2.0',
@@ -77,8 +76,9 @@ class MopidyAPI:
                      json=rpcjson).json()
 
             # assert: no errors :^)
-            err = r.get('error', {}).get('data', {}).get('message')
-            assert 'error' not in r, err
+            # fail if error, pass error message to MopidyError exception
+            errmsg = r.get('error', {}).get('data', {}).get('message')
+            assert 'error' not in r, errmsg
 
             # dict -> namedtuples and return
             return deserialize_mopidy(r['result'])
@@ -87,9 +87,12 @@ class MopidyAPI:
         except AssertionError as ex:
             err = f"Mopidy error: {ex}"
             self.logger.error(err)
+            raise MopidyError(str(ex))
         except ConnectionError as ex:
-            err = f"Mopidy connection error: {ex} {helpstr}"
+            err = f"Mopidy connection error: {ex} "
             self.logger.error(err)
-        except JSONDecodeError:
-            err = f"Got weird response from Mopidy. {helpstr}"
+            raise ex
+        except JSONDecodeError as ex:
+            err = f"Could not decode json from Mopidy: {str(ex)}"
             self.logger.error(err)
+            raise ConnectionError(ex)
