@@ -25,30 +25,30 @@ class MopidyWSClient:
         # start websocket listener in a separate thread
         self.logger.info("Creating Mopidy Websocket connection...")
         self.wsthread = Thread(target=self._websocket_runner,
-                               args=(asyncio.new_event_loop(),),
+                               args=(asyncio.new_event_loop(), self.logger),
                                name="WSListener", daemon=True)
         self.wsthread.start()
 
-    def _websocket_runner(self, loop):
+    def _websocket_runner(self, loop, logger):
         """ Method to run in websocket handler thread.
         Receives websocket messages using the library 'websockets'.
         Since 'websockets' uses asyncio, it needs an event loop.
         """
         async def packethandler():
-            async with websockets.connect(self.ws_url) as ws:
-                while True:
-                    msg = await ws.recv()
-                    self._on_message(msg)
-
-        while True:
             try:
-                # run listener forever
-                loop.run_until_complete(packethandler())
+                async with websockets.connect(self.ws_url) as ws:
+                    while True:
+                        msg = await ws.recv()
+                        self._on_message(msg)
             except Exception as e:
                 # reconnect on exceptions
                 self.logger.warning(
-                    f"Mopidy Websocket connection error (reconnecting): {e}")
+                    f"Mopidy connection error (reconnecting): {e}")
                 sleep(0.5)
+
+        while True:
+            # run listener forever
+            loop.run_until_complete(packethandler())
 
     def _on_message(self, msgstr: str):
         """ Method to be called on every arriving websocket message. """

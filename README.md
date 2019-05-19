@@ -143,7 +143,7 @@ which will return an actual dict.
 
 ## Contributing
 
-Please do tell me bout bugs via the [github issue tracker](https://github.com/AsbjornOlling/mopidyapi).
+Please do tell me about bugs via the [github issue tracker](https://github.com/AsbjornOlling/mopidyapi).
 
 Also feel free to write, if you're just in the mood to help me improve this project. I don't bite :)
 
