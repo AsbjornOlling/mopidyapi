@@ -5,6 +5,7 @@ import asyncio
 import json
 from threading import Thread
 from collections import namedtuple
+from time import sleep
 
 # deps
 import websockets
@@ -39,14 +40,15 @@ class MopidyWSClient:
                     msg = await ws.recv()
                     self._on_message(msg)
 
-        # run listener forever, reconnect on exceptions
         while True:
             try:
+                # run listener forever
                 loop.run_until_complete(packethandler())
             except Exception as e:
-                raise e
+                # reconnect on exceptions
                 self.logger.warning(
-                    f"Websocket connection error (reconnecting): {e}")
+                    f"Mopidy Websocket connection error (reconnecting): {e}")
+                sleep(0.5)
 
     def _on_message(self, msgstr: str):
         """ Method to be called on every arriving websocket message. """

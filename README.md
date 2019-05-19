@@ -103,24 +103,33 @@ def print_newtracks(event):
 
 Like with function calls, the events passed are [namedtuples.](https://docs.python.org/3.7/library/collections.html#collections.namedtuple)
 
-## Note on the choice of `namedtuple`s
+An important caveat with the event listener decorators,
+is that it will not warn you in any way, if you use an invalid event name (e.g. you misspell the event name).
+
+## Note on the choice of `namedtuples`
 
 ### Why `namedtuples`?
 
 The choice of namedtuples might seem unusual (or even inconvenient),
-but they have a number of advantages over `dict`s for this application:
+but they have a number of advantages over dictionaries for this application:
 
 **1. Less verbose than dicts.**
 
 `event.tl_track.track.album.name`
+
 is shorter and easier on the eyes than 
+
 `event['tl_track']['track']['album']['name']`
 
 **2. They print much more neatly.**
 
-`Artist(name='Death Grips', uri='spotify:artist:5RADpgYLOuS2ZxDq7ggYYH')` is much better than `{'name': 'Death Grips', 'uri': 'spotify:artist:5RADpgYLOuS2ZxDq7ggYYH'}`.
+`Artist(name='Death Grips', uri='spotify:artist:5RADpgYLOuS2ZxDq7ggYYH')`
 
-**3. `namedtuple`s accurately represent the immutable nature of the data.**
+is much better than
+
+`{'name': 'Death Grips', 'uri': 'spotify:artist:5RADpgYLOuS2ZxDq7ggYYH'}`.
+
+**3. `namedtuples` accurately represent the immutable nature of the data.**
 
 Being allowed to mutate the data coming from Mopidy might give one the idea that this would change the data inside Mopidy, which is obviously not the case.
 
@@ -129,7 +138,7 @@ Being allowed to mutate the data coming from Mopidy might give one the idea that
 
 Okay, so if you need `.keys()`, you can use `._fields()` instead,
 and if you absolutely need a dict, you can use `._asdict()`,
-will return an actual dict.
+which will return an actual dict.
 
 
 ## Contributing
