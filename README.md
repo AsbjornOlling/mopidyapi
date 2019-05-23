@@ -51,8 +51,8 @@ For example `mopidy.core.PlaybackController.pause()` in the documentation maps t
 
 ### Connecting to Mopidy
 
-Instantiate a `MopidyAPI` object.
-By default, it connects to Mopidy at `localhost:6680`,
+To connect to Mopidy, you need to instantiate a `MopidyAPI` object.
+By default, it will connect to Mopidy at `localhost:6680`,
 so you might not need to give the constructor any arguments.
 
 ```python
@@ -74,7 +74,7 @@ Functions named in the Mopidy docs as `core.<ControllerName>Controller.<function
 will be under the name `MopidyAPI.<controllername>.<functionname>()`
 
 For example, you can pause the music by calling `m.playback.pause()`,
-or you could add a song by calling e.g. `m.tracklist.add(artist='Rick Astley')`(where `m = MopidyAPI()`).
+or you could search for a song by calling e.g. `m.library.search(artist='Rick Astley')`, where `m = MopidyAPI()`.
 
 Functions will return
 [Python native `namedtuple`](https://docs.python.org/3.7/library/collections.html#collections.namedtuple)
@@ -97,7 +97,7 @@ def print_volume(event):
 
 @m.on_event('track_playback_started')
 def print_newtracks(event):
-    print(f"Started playing track: {track.}")
+    print(f"Started playing track: {event.track.name}")
 
 ```
 
