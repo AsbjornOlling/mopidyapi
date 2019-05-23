@@ -6,8 +6,8 @@ import logging
 from requests import post
 
 # app
+from .parsedata import deserialize_mopidy, serialize_mopidy
 from .wsclient import MopidyWSClient
-from .parsedata import deserialize_mopidy
 from .exceptions import MopidyError
 from .controllers import (
     history,
@@ -64,9 +64,9 @@ class MopidyAPI:
                    'id': 0,
                    'method': command}
         if kwargs:
-            rpcjson['params'] = kwargs
+            rpcjson['params'] = serialize_mopidy(kwargs)
         elif args:
-            rpcjson['params'] = list(args)
+            rpcjson['params'] = serialize_mopidy(list(args))
 
         try:
             self.logger.debug(f"Sending Mopidy RPC: {rpcjson}")
