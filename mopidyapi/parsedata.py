@@ -12,7 +12,6 @@ from typing import Dict, List
 from functools import lru_cache
 
 
-@lru_cache(maxsize=1024)
 def deserialize_mopidy(data):
     """ Recursively turn the structure of mopidy dicts
     into an identical structure of namedtuples.
@@ -43,7 +42,6 @@ def deserialize_mopidy(data):
         raise ValueError(f"Uncaught type: {type(data)}")
 
 
-@lru_cache(maxsize=1024)
 def serialize_mopidy(data):
     """ Recursively turn a MopidyAPI namedtuple
     into Mopidy-understandable JSON. """

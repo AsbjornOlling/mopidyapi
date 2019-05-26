@@ -1,7 +1,10 @@
 
 CODEGEN_DIR=./codegen
 
-build:
+test:
+	python -m pytest
+
+build: test
 	flit build
 
 install: build
