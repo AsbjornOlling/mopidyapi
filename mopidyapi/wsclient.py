@@ -56,7 +56,7 @@ class MopidyWSClient:
         if 'event' in msg.keys():
             self._route_event(msg)
         else:
-            self.logger.debug(f"Received unknown type packet: {msg}")
+            self.logger.debug(f"Not routing packet: {msgstr}")
 
     def _route_event(self, event: dict):
         """ Pass event data to the functions registered

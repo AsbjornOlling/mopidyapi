@@ -58,6 +58,7 @@ class MopidyAPI:
         Response JSON is deserialized into namedtuples
         before returning.
         """
+        self.logger.debug(f"Calling Mopidy method: {command}")
 
         # assemble rpc command
         rpcjson = {'jsonrpc': '2.0',
@@ -69,8 +70,6 @@ class MopidyAPI:
             rpcjson['params'] = serialize_mopidy(list(args))
 
         try:
-            self.logger.debug(f"Sending Mopidy RPC: {rpcjson}")
-
             # do the HTTP POST to mopidy
             r = post(self.http_url,
                      json=rpcjson).json()
