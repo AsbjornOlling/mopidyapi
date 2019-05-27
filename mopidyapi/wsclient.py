@@ -40,7 +40,7 @@ class MopidyWSClient:
                     while True:
                         msg = await ws.recv()
                         self._on_message(msg)
-            except Exception as e:
+            except ConnectionError as e:
                 # reconnect on exceptions
                 self.logger.warning(
                     f"Mopidy connection error (reconnecting): {e}")
