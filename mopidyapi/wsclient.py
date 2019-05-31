@@ -22,7 +22,11 @@ class MopidyWSClient:
         self.logger = logger if logger else logging.getLogger(__name__)
         self.ws_url = ws_url
         self._event_callbacks = {}
-        self.flask_object = flask_object._get_current_object()
+
+        if flask_object is not None:
+            # get non-proxy flask object, to pass app context into thread
+            logger.debug("Using Flask object inside Mopidy listener.")
+            self.flask_object = flask_object._get_current_object()
 
         # start websocket listener in a separate thread
         self.logger.info("Creating Mopidy Websocket connection...")
