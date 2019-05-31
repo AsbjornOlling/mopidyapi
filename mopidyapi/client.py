@@ -29,8 +29,8 @@ class MopidyAPI:
     and starts an instance of MopidyWSClient to listen
     for events.
     """
-    def __init__(self, host='localhost', port=6680,
-                 use_websocket=True, logger=None):
+    def __init__(self, host='localhost', port=6680, use_websocket=True,
+                 logger=None, flask_object=None):
         # boring constructor stuff
         self.logger = logger if logger else logging.getLogger(__name__)
 
@@ -49,7 +49,8 @@ class MopidyAPI:
         if use_websocket:
             # start websocket connection, and borrow a decorator
             self.wsclient = MopidyWSClient(ws_url=self.ws_url,
-                                           logger=self.logger)
+                                           logger=self.logger,
+                                           flask_object=flask_object)
             self.on_event = self.wsclient.on_event
 
     def rpc_call(self, command: str, *args, **kwargs):

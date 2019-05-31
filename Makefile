@@ -10,6 +10,10 @@ build: test
 install: build
 	flit install
 
+reinstall: build
+	pip uninstall mopidyapi
+	flit install
+
 gen-controller-code:
 	# run from git repo root
 	pipenv run \
