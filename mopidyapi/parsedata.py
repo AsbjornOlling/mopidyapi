@@ -8,7 +8,6 @@ the named tuples.
 
 # std lib
 from collections import namedtuple
-from typing import Dict, List
 from functools import lru_cache
 
 
@@ -17,7 +16,7 @@ def deserialize_mopidy(data):
     into an identical structure of namedtuples.
     """
     # first detect type of data
-    if isinstance(data, Dict) and '__model__' in data:
+    if isinstance(data, dict) and '__model__' in data.keys():
         # found object dict. get name of object and fields
         model = data['__model__']
         fields = [k for k in data.keys() if k != '__model__']
@@ -31,13 +30,17 @@ def deserialize_mopidy(data):
         # make tuple from recused dict
         return nt(**recd)
 
-    elif isinstance(data, List):
+    elif isinstance(data, list):
         # recurse on list
-        return list(map(deserialize_mopidy, data))
+        return [deserialize_mopidy(d) for d in data]
 
-    elif isinstance(data, str) or isinstance(data, int) or data is None:
-        # strings, ints, and None should be the only primitives here
+    elif isinstance(data, dict):
+        # recurse on dict (dict w/o __model__ field)
+        return {k: deserialize_mopidy(v) for k, v in data.items()}
+
+    elif isinstance(data, (str, int)) or data is None:
         return data
+
     else:
         raise ValueError(f"Uncaught type: {type(data)}")
 

@@ -9,6 +9,7 @@ from time import sleep
 
 # deps
 import websockets
+from websockets.exceptions import ConnectionClosed
 
 # app imports
 from .parsedata import deserialize_mopidy
@@ -50,6 +51,11 @@ class MopidyWSClient:
                 # reconnect on connection errors
                 self.logger.warning(
                     f"Mopidy connection error (reconnecting): {e}")
+                sleep(0.5)
+            except ConnectionClosed as e:
+                # reconnect on connection errors
+                self.logger.warning(
+                    f"Mopidy connection closed (reconnecting): {e}")
                 sleep(0.5)
 
         while True:
