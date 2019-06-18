@@ -32,7 +32,9 @@ class MopidyAPI:
     def __init__(self, host='localhost', port=6680, use_websocket=True,
                  logger=None, flask_object=None):
         # boring constructor stuff
-        self.logger = logger if logger else logging.getLogger(__name__)
+        self.logger = (logger if logger is not None
+                       else logging.getLogger(__name__))
+        self.logger.debug("Creating MopidyAPI client object...")
 
         # get rpc addresses
         self.http_url = f'http://{host}:{port}/mopidy/rpc'

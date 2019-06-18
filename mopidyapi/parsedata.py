@@ -8,26 +8,24 @@ the named tuples.
 
 # std lib
 from collections import namedtuple
-from functools import lru_cache
+from loguru import logger
 
 
+@logger.catch()
 def deserialize_mopidy(data):
     """ Recursively turn the structure of mopidy dicts
     into an identical structure of namedtuples.
     """
     # first detect type of data
     if isinstance(data, dict) and '__model__' in data.keys():
-        # found object dict. get name of object and fields
-        model = data['__model__']
-        fields = [k for k in data.keys() if k != '__model__']
-
         # define namedtuple based on keys in dict
-        nt = namedtuple(model, fields)
+        fields = [k for k in data.keys() if k != '__model__']
+        nt = namedtuple(data['__model__'], fields)
 
         # recurse on dict
         recd = {k: deserialize_mopidy(data[k]) for k in fields}
 
-        # make tuple from recused dict
+        # make namedtuple from resulting dict
         return nt(**recd)
 
     elif isinstance(data, list):
