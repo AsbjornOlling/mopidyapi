@@ -6,7 +6,7 @@ using its JSON RPC API.
 """
 
 __all__ = ['client', 'wsclient', 'exceptions']
-__version__ = '0.6.4'
+__version__ = '0.6.5'
 
 from .client import MopidyAPI
 from .wsclient import MopidyWSClient
