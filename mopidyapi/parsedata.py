@@ -8,10 +8,8 @@ the named tuples.
 
 # std lib
 from collections import namedtuple
-from loguru import logger
 
 
-@logger.catch()
 def deserialize_mopidy(data):
     """ Recursively turn the structure of mopidy dicts
     into an identical structure of namedtuples.
