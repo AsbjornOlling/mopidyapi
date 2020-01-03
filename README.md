@@ -7,7 +7,7 @@ API](https://docs.mopidy.com/en/latest/api/http/).
 
 `MopidyAPI` uses HTTP to call RPC methods, and websockets to listen for events.
 
-It is compatible with all functions present in Mopidy 2.2.
+It is compatible with all functions present in Mopidy 3.0.1.
 
 ## Installation
 
@@ -17,7 +17,7 @@ pip install mopidyapi
 
 ## Usage
 
-`MopidyAPI` contains functions mapping to each of [the Mopidy v2.2 core API functions.](https://docs.mopidy.com/en/release-2.2/api/core/)
+`MopidyAPI` contains functions mapping to each of [the Mopidy v3.0.1 core API functions.](https://docs.mopidy.com/en/latest/api/core/)
 
 For example `mopidy.core.PlaybackController.pause()` in the documentation maps to `MopidyAPI.playback.pause()` here. 
 
@@ -67,7 +67,7 @@ which runs in a separate thread. However, event listening (described below) won'
 ### Calling Mopidy functions
 
 All of the functions described in the
-[Mopidy 2.2 core API documentation](http://docs.mopidy.com/en/latest/api/core/)
+[Mopidy 3.0.1 core API documentation](http://docs.mopidy.com/en/latest/api/core/)
 are available in `MopidyAPI`.
 
 Functions named in the Mopidy docs as `core.<ControllerName>Controller.<functionname>()`,
