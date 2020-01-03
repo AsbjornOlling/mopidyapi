@@ -8,49 +8,6 @@ class LibraryController:
     def __init__(self, client):
         self.client = client
 
-    def lookup(self, *args, **kwargs):
-        """ Lookup the given URIs.
-    
-    If the URI expands to multiple tracks, the returned list will contain
-    them all.
-    
-    :param uri: track URI
-    :type uri: string or :class:`None`
-    :param uris: track URIs
-    :type uris: list of string or :class:`None`
-    :rtype: list of :class:`mopidy.models.Track` if uri was set or
-        {uri: list of :class:`mopidy.models.Track`} if uris was set.
-    
-    .. versionadded:: 1.0
-        The ``uris`` argument.
-    
-    .. deprecated:: 1.0
-        The ``uri`` argument. Use ``uris`` instead. """
-        return self.client.rpc_call('core.library.lookup', *args, **kwargs)
-
-    def get_distinct(self, *args, **kwargs):
-        """ List distinct values for a given field from the library.
-    
-    This has mainly been added to support the list commands the MPD
-    protocol supports in a more sane fashion. Other frontends are not
-    recommended to use this method.
-    
-    :param string field: One of ``track``, ``artist``, ``albumartist``,
-        ``album``, ``composer``, ``performer``, ``date`` or ``genre``.
-    :param dict query: Query to use for limiting results, see
-        :meth:`search` for details about the query format.
-    :rtype: set of values corresponding to the requested field type.
-    
-    .. versionadded:: 1.0 """
-        return self.client.rpc_call('core.library.get_distinct', *args, **kwargs)
-
-    def refresh(self, *args, **kwargs):
-        """ Refresh library. Limit to URI and below if an URI is given.
-    
-    :param uri: directory or track URI
-    :type uri: string """
-        return self.client.rpc_call('core.library.refresh', *args, **kwargs)
-
     def browse(self, *args, **kwargs):
         """ Browse directories and tracks at the given ``uri``.
     
@@ -84,11 +41,63 @@ class LibraryController:
     .. versionadded:: 0.18 """
         return self.client.rpc_call('core.library.browse', *args, **kwargs)
 
+    def get_distinct(self, *args, **kwargs):
+        """ List distinct values for a given field from the library.
+    
+    This has mainly been added to support the list commands the MPD
+    protocol supports in a more sane fashion. Other frontends are not
+    recommended to use this method.
+    
+    :param string field: One of ``track``, ``artist``, ``albumartist``,
+        ``album``, ``composer``, ``performer``, ``date`` or ``genre``.
+    :param dict query: Query to use for limiting results, see
+        :meth:`search` for details about the query format.
+    :rtype: set of values corresponding to the requested field type.
+    
+    .. versionadded:: 1.0 """
+        return self.client.rpc_call('core.library.get_distinct', *args, **kwargs)
+
+    def get_images(self, *args, **kwargs):
+        """ Lookup the images for the given URIs
+    
+    Backends can use this to return image URIs for any URI they know about
+    be it tracks, albums, playlists. The lookup result is a dictionary
+    mapping the provided URIs to lists of images.
+    
+    Unknown URIs or URIs the corresponding backend couldn't find anything
+    for will simply return an empty list for that URI.
+    
+    :param uris: list of URIs to find images for
+    :type uris: list of string
+    :rtype: {uri: tuple of :class:`mopidy.models.Image`}
+    
+    .. versionadded:: 1.0 """
+        return self.client.rpc_call('core.library.get_images', *args, **kwargs)
+
+    def lookup(self, *args, **kwargs):
+        """ Lookup the given URIs.
+    
+    If the URI expands to multiple tracks, the returned list will contain
+    them all.
+    
+    :param uris: track URIs
+    :type uris: list of string
+    :rtype: {uri: list of :class:`mopidy.models.Track`} """
+        return self.client.rpc_call('core.library.lookup', *args, **kwargs)
+
+    def refresh(self, *args, **kwargs):
+        """ Refresh library. Limit to URI and below if an URI is given.
+    
+    :param uri: directory or track URI
+    :type uri: string """
+        return self.client.rpc_call('core.library.refresh', *args, **kwargs)
+
     def search(self, *args, **kwargs):
         """ Search the library for tracks where ``field`` contains ``values``.
+    
     ``field`` can be one of ``uri``, ``track_name``, ``album``, ``artist``,
     ``albumartist``, ``composer``, ``performer``, ``track_no``, ``genre``,
-    ``date``, ``comment`` or ``any``.
+    ``date``, ``comment``, or ``any``.
     
     If ``uris`` is given, the search is limited to results from within the
     URI roots. For example passing ``uris=['file:']`` will limit the search
@@ -122,38 +131,5 @@ class LibraryController:
     :rtype: list of :class:`mopidy.models.SearchResult`
     
     .. versionadded:: 1.0
-        The ``exact`` keyword argument, which replaces :meth:`find_exact`.
-    
-    .. deprecated:: 1.0
-        Previously, if the query was empty, and the backend could support
-        it, all available tracks were returned. This has not changed, but
-        it is strongly discouraged. No new code should rely on this
-        behavior.
-    
-    .. deprecated:: 1.1
-        Providing the search query via ``kwargs`` is no longer supported. """
+        The ``exact`` keyword argument. """
         return self.client.rpc_call('core.library.search', *args, **kwargs)
-
-    def find_exact(self, *args, **kwargs):
-        """ Search the library for tracks where ``field`` is ``values``.
-    
-    .. deprecated:: 1.0
-        Use :meth:`search` with ``exact`` set. """
-        return self.client.rpc_call('core.library.find_exact', *args, **kwargs)
-
-    def get_images(self, *args, **kwargs):
-        """ Lookup the images for the given URIs
-    
-    Backends can use this to return image URIs for any URI they know about
-    be it tracks, albums, playlists. The lookup result is a dictionary
-    mapping the provided URIs to lists of images.
-    
-    Unknown URIs or URIs the corresponding backend couldn't find anything
-    for will simply return an empty list for that URI.
-    
-    :param uris: list of URIs to find images for
-    :type uris: list of string
-    :rtype: {uri: tuple of :class:`mopidy.models.Image`}
-    
-    .. versionadded:: 1.0 """
-        return self.client.rpc_call('core.library.get_images', *args, **kwargs)
