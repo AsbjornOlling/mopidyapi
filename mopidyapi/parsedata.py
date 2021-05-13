@@ -15,9 +15,9 @@ def deserialize_mopidy(data):
     into an identical structure of namedtuples.
     """
     # first detect type of data
-    if isinstance(data, dict) and '__model__' in data.keys():
+    if isinstance(data, dict) and '__model__' in data:
         # define namedtuple based on keys in dict
-        fields = [k for k in data.keys() if k != '__model__']
+        fields = [k for k in data if k != '__model__']
         nt = namedtuple(data['__model__'], fields)
 
         # recurse on dict

@@ -68,7 +68,7 @@ class MopidyWSClient:
     def _on_message(self, msgstr: str):
         """ Method to be called on every arriving websocket message. """
         msg = json.loads(msgstr)
-        if 'event' in msg.keys():
+        if 'event' in msg:
             self._route_event(msg)
         else:
             self.logger.debug(f"Not routing packet: {msgstr}")
@@ -82,7 +82,7 @@ class MopidyWSClient:
         callbacks = self._event_callbacks.get(evname, [])
         for cb in callbacks:
             # deserialize into neat named tuples
-            nt = namedtuple(evname, event.keys())
+            nt = namedtuple(evname, event)
             neatdata = nt(**{k: deserialize_mopidy(event[k]) for k in event})
 
             # call the callback
@@ -108,10 +108,39 @@ class MopidyWSClient:
             Event callbacks dict is of type Set - to avoid
             the function being entered multiple times.
             """
-            if event in cbs.keys():
+            if event in cbs:
                 cbs[event].add(f)
             else:
                 cbs[event] = set([f])
             return f
 
         return decorator
+
+    def add_callback(self, event, f):
+        """ Add function to callback dict, to be called
+        when specific event arrives.
+        """
+        cbs = self._event_callbacks
+        if event in cbs:
+            cbs[event].add(f)
+        else:
+            cbs[event] = set([f])
+
+    def del_callback(self, event=None, f=None):
+        """ Remove event / function.
+        1. Remove complete event, if function is None.
+        2. Remove function from all events, if event is None.
+        3. Remove function from event.
+        """
+        cbs = self._event_callbacks
+        if event and method is None:
+            # Remove entire event
+            del cbs[event]
+        elif event is None and method:
+            # Remove given method from all events
+            for methods in cbs.values():
+                if method in methods:
+                    methods.remove(method)
+        elif event and method:
+            # Remove given method from given event
+            cbs[event].remove(method)
