@@ -79,7 +79,9 @@ class MopidyWSClient:
         """
         evname = event['event']
         self.logger.debug(f"Routing event: {evname}")
-        callbacks = self._event_callbacks.get(evname, [])
+        callbacks = (
+            self._event_callbacks.get(evname, set()) |
+            self._event_callbacks.get('*', set()))
         if callbacks:
             # deserialize into neat named tuples
             nt = namedtuple(evname, event)
