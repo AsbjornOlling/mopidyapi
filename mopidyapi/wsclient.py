@@ -18,10 +18,11 @@ from .parsedata import deserialize_mopidy
 class MopidyWSClient:
     """ Mopidy Websocket API Client """
     def __init__(self, ws_url='localhost:6680', logger=None,
-                 flask_object=None):
+                 reconnect_time=0.5, flask_object=None):
         # typical, boring constructor stuff
         self.logger = logger if logger else logging.getLogger(__name__)
         self.ws_url = ws_url
+        self.reconnect_time = reconnect_time
         self._event_callbacks = {}
 
         if flask_object is not None:
@@ -50,16 +51,11 @@ class MopidyWSClient:
                     while True:
                         msg = await ws.recv()
                         self._on_message(msg)
-            except ConnectionError as e:
+            except (ConnectionError, ConnectionClosed, OSError) as e:
                 # reconnect on connection errors
                 self.logger.warning(
                     f"Mopidy connection error (reconnecting): {e}")
-                sleep(0.5)
-            except ConnectionClosed as e:
-                # reconnect on connection errors
-                self.logger.warning(
-                    f"Mopidy connection closed (reconnecting): {e}")
-                sleep(0.5)
+                sleep(self.reconnect_time)
 
         while True:
             # run listener (forever)
