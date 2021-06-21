@@ -38,7 +38,6 @@ class MopidyAPI:
 
         # get rpc addresses
         self.http_url = f'http://{host}:{port}/mopidy/rpc'
-        self.ws_url = f'ws://{host}:{port}/mopidy/ws'
 
         # load controllers (which encapsulate rpc methods)
         self.history = history.HistoryController(self)
@@ -50,7 +49,7 @@ class MopidyAPI:
 
         if use_websocket:
             # start websocket connection, and borrow a decorator
-            self.wsclient = MopidyWSClient(ws_url=self.ws_url,
+            self.wsclient = MopidyWSClient(host=host, port=port,
                                            logger=self.logger,
                                            flask_object=flask_object)
             self.on_event = self.wsclient.on_event
