@@ -17,11 +17,11 @@ from .parsedata import deserialize_mopidy
 
 class MopidyWSClient:
     """ Mopidy Websocket API Client """
-    def __init__(self, ws_url='localhost:6680', logger=None,
+    def __init__(self, host='localhost', port=6680, logger=None,
                  reconnect_time=0.5, flask_object=None):
         # typical, boring constructor stuff
         self.logger = logger if logger else logging.getLogger(__name__)
-        self.ws_url = ws_url
+        self.ws_url = f'ws://{host}:{port}/mopidy/ws'
         self.reconnect_time = reconnect_time
         self._event_callbacks = {}
 
