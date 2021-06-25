@@ -6,6 +6,7 @@ import json
 from threading import Thread
 from collections import namedtuple
 from time import sleep
+from functools import partial
 
 # deps
 import websockets
@@ -95,32 +96,22 @@ class MopidyWSClient:
         """ Function decorator, to listen for events.
         Decorated function is added to callbacks dict,
         to be called when specified event arrives.
-        TODO: check for invalid/unsupported event names
         """
-        cbs = self._event_callbacks
-
-        def decorator(f):
-            """ Appends function to the event callbacks dict.
-            Event callbacks dict is of type Set - to avoid
-            the function being entered multiple times.
-            """
-            if event in cbs:
-                cbs[event].add(f)
-            else:
-                cbs[event] = set([f])
-            return f
-
-        return decorator
+        return partial(self.add_callback, event)
 
     def add_callback(self, event, f):
         """ Add function to callback dict, to be called
-        when specific event arrives.
+            when specific event arrives.
+            Event callbacks dict is of type Set - to avoid
+            the same function being entered multiple times.
+            TODO: check for invalid/unsupported event names
         """
         cbs = self._event_callbacks
         if event in cbs:
             cbs[event].add(f)
         else:
             cbs[event] = set([f])
+        return f
 
     def del_callback(self, event=None, f=None):
         """ Remove event / function.
