@@ -120,14 +120,14 @@ class MopidyWSClient:
         3. Remove function from event.
         """
         cbs = self._event_callbacks
-        if event and method is None:
+        if event and f is None:
             # Remove entire event
             del cbs[event]
-        elif event is None and method:
+        elif event is None and f:
             # Remove given method from all events
-            for methods in cbs.values():
-                if method in methods:
-                    methods.remove(method)
-        elif event and method:
+            for fs in cbs.values():
+                if f in fs:
+                    fs.remove(f)
+        elif event and f:
             # Remove given method from given event
-            cbs[event].remove(method)
+            cbs[event].remove(f)
