@@ -103,25 +103,24 @@ def print_newtracks(event):
 
 Like with function calls, the events passed are [namedtuples.](https://docs.python.org/3.7/library/collections.html#collections.namedtuple)
 
-Alternatively you can use `add_callback` and `del_callback`, which can also be used
-inside a class:
+If you need to add and remove callbacks more dynamically, you can use the `add_callback` and `del_callback` functions.
+
+`del_callback` accepts two keyword arguments:
+- `event`: an event name string to remove all callbacks for
+- `f`: a callback function to remove
+
+You can use one or both. Here's an example of passing a function to `del_callback`:
+
 ```python
 from mopidyapi import MopidyAPI
+m = MopidyAPI()
 
-class Mopidy:
+def print_volume(event):
+    """ Print volume only once. Delete callback after first call """
+    print(f"Volume changed to: {event.volume}")
+    m.del_callback(f=print_volume)
 
-    def __init__(self):
-        self.m = MopidyAPI()
-
-        m.add_callback('volume_changed', self.print_volume)
-        m.add_callback('track_playback_started', self.print_newtracks)
-
-    def print_volume(self, event):
-        print(f"Volume changed to: {event.volume}")
-
-    def print_newtracks(self, event):
-        print(f"Started playing track: {event.track.name}")
-
+m.add_callback('volume_changed', print_volume)
 ```
 
 An important caveat with both the event listener decorators and add methods,
