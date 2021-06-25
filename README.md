@@ -19,7 +19,7 @@ pip install mopidyapi
 
 `MopidyAPI` contains functions mapping to each of [the Mopidy v3.0.1 core API functions.](https://docs.mopidy.com/en/latest/api/core/)
 
-For example `mopidy.core.PlaybackController.pause()` in the documentation maps to `MopidyAPI.playback.pause()` here. 
+For example `mopidy.core.PlaybackController.pause()` in the documentation maps to `MopidyAPI.playback.pause()` here.
 
 ### Quick example
 
@@ -103,7 +103,27 @@ def print_newtracks(event):
 
 Like with function calls, the events passed are [namedtuples.](https://docs.python.org/3.7/library/collections.html#collections.namedtuple)
 
-An important caveat with the event listener decorators,
+If you need to add and remove callbacks more dynamically, you can use the `add_callback` and `del_callback` functions.
+
+`del_callback` accepts two keyword arguments:
+- `event`: an event name string to remove all callbacks for
+- `f`: a callback function to remove
+
+You can use one or both. Here's an example of passing a function to `del_callback`:
+
+```python
+from mopidyapi import MopidyAPI
+m = MopidyAPI()
+
+def print_volume(event):
+    """ Print volume only once. Delete callback after first call """
+    print(f"Volume changed to: {event.volume}")
+    m.del_callback(f=print_volume)
+
+m.add_callback('volume_changed', print_volume)
+```
+
+An important caveat with both the event listener decorators and add methods,
 is that it will not warn you in any way, if you use an invalid event name (e.g. you misspell the event name).
 
 ## Note on the choice of `namedtuples`
@@ -117,7 +137,7 @@ but they have a number of advantages over dictionaries for this application:
 
 `event.tl_track.track.album.name`
 
-is shorter and easier on the eyes than 
+is shorter and easier on the eyes than
 
 `event['tl_track']['track']['album']['name']`
 

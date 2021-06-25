@@ -53,6 +53,8 @@ class MopidyAPI:
                                            logger=self.logger,
                                            flask_object=flask_object)
             self.on_event = self.wsclient.on_event
+            self.add_callback = self.wsclient.add_callback
+            self.del_callback = self.wsclient.del_callback
 
     def rpc_call(self, command: str, *args, **kwargs):
         """ Call the Mopidy HTTP JSON RPC API, (by sending

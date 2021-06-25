@@ -6,6 +6,7 @@ import json
 from threading import Thread
 from collections import namedtuple
 from time import sleep
+from functools import partial
 
 # deps
 import websockets
@@ -64,7 +65,7 @@ class MopidyWSClient:
     def _on_message(self, msgstr: str):
         """ Method to be called on every arriving websocket message. """
         msg = json.loads(msgstr)
-        if 'event' in msg.keys():
+        if 'event' in msg:
             self._route_event(msg)
         else:
             self.logger.debug(f"Not routing packet: {msgstr}")
@@ -78,7 +79,7 @@ class MopidyWSClient:
         callbacks = self._event_callbacks.get(evname, [])
         for cb in callbacks:
             # deserialize into neat named tuples
-            nt = namedtuple(evname, event.keys())
+            nt = namedtuple(evname, event)
             neatdata = nt(**{k: deserialize_mopidy(event[k]) for k in event})
 
             # call the callback
@@ -95,19 +96,38 @@ class MopidyWSClient:
         """ Function decorator, to listen for events.
         Decorated function is added to callbacks dict,
         to be called when specified event arrives.
-        TODO: check for invalid/unsupported event names
+        """
+        return partial(self.add_callback, event)
+
+    def add_callback(self, event, f):
+        """ Add function to callback dict, to be called
+            when specific event arrives.
+            Event callbacks dict is of type Set - to avoid
+            the same function being entered multiple times.
+            TODO: check for invalid/unsupported event names
         """
         cbs = self._event_callbacks
+        if event in cbs:
+            cbs[event].add(f)
+        else:
+            cbs[event] = set([f])
+        return f
 
-        def decorator(f):
-            """ Appends function to the event callbacks dict.
-            Event callbacks dict is of type Set - to avoid
-            the function being entered multiple times.
-            """
-            if event in cbs.keys():
-                cbs[event].add(f)
-            else:
-                cbs[event] = set([f])
-            return f
-
-        return decorator
+    def del_callback(self, event=None, f=None):
+        """ Remove event / function.
+        1. Remove complete event, if function is None.
+        2. Remove function from all events, if event is None.
+        3. Remove function from event.
+        """
+        cbs = self._event_callbacks
+        if event and f is None:
+            # Remove entire event
+            del cbs[event]
+        elif event is None and f:
+            # Remove given method from all events
+            for fs in cbs.values():
+                if f in fs:
+                    fs.remove(f)
+        elif event and f:
+            # Remove given method from given event
+            cbs[event].remove(f)
