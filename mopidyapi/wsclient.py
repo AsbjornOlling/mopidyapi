@@ -76,21 +76,24 @@ class MopidyWSClient:
         """
         evname = event['event']
         self.logger.debug(f"Routing event: {evname}")
-        callbacks = self._event_callbacks.get(evname, [])
-        for cb in callbacks:
+        callbacks = (
+            self._event_callbacks.get(evname, set()) |
+            self._event_callbacks.get('*', set()))
+        if callbacks:
             # deserialize into neat named tuples
             nt = namedtuple(evname, event)
             neatdata = nt(**{k: deserialize_mopidy(event[k]) for k in event})
 
-            # call the callback
-            if self.flask_object is not None:
-                # allow event handlers to use flask obj
-                # despite running in separate thread
-                with self.flask_object.app_context():
+            for cb in callbacks:
+                # call the callback
+                if self.flask_object is not None:
+                    # allow event handlers to use flask obj
+                    # despite running in separate thread
+                    with self.flask_object.app_context():
+                        cb(neatdata)
+                else:
+                    # regular callback (all cases but flask apps)
                     cb(neatdata)
-            else:
-                # regular callback (all cases but flask apps)
-                cb(neatdata)
 
     def on_event(self, event: str):
         """ Function decorator, to listen for events.
