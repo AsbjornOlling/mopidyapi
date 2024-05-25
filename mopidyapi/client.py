@@ -29,15 +29,15 @@ class MopidyAPI:
     and starts an instance of MopidyWSClient to listen
     for events.
     """
-    def __init__(self, host='localhost', port=6680, use_websocket=True,
-                 logger=None, flask_object=None):
+    def __init__(self, host='localhost', port=6680, ssl=False,
+                 use_websocket=True, logger=None, flask_object=None):
         # boring constructor stuff
         self.logger = (logger if logger is not None
                        else logging.getLogger(__name__))
         self.logger.debug("Creating MopidyAPI client object...")
 
         # get rpc addresses
-        self.http_url = f'http://{host}:{port}/mopidy/rpc'
+        self.http_url = f'http{"s" if ssl else ""}://{host}:{port}/mopidy/rpc'
 
         # load controllers (which encapsulate rpc methods)
         self.history = history.HistoryController(self)
