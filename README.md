@@ -1,3 +1,5 @@
+
+
 MopidyAPI
 =========
 
@@ -60,7 +62,7 @@ from mopidyapi import MopidyAPI
 m = MopidyAPI(host='my.mopidy.host.com', port=6680)
 ```
 
-You can also pass `use_websockets=False`, to prevent starting the websocket listener,
+You can also pass `use_websocket=False`, to prevent starting the websocket listener,
 which runs in a separate thread. However, event listening (described below) won't work with this set.
 
 
