@@ -20,7 +20,7 @@ from .controllers import (
 
 # exceptions
 from json.decoder import JSONDecodeError
-from requests.exceptions import ConnectionError
+from requests.exceptions import ConnectionError, Timeout
 
 
 class MopidyAPI:
@@ -75,8 +75,11 @@ class MopidyAPI:
 
         try:
             # do the HTTP POST to mopidy
-            r = post(self.http_url,
-                     json=rpcjson).json()
+            r = post(
+                self.http_url,
+                json=rpcjson,
+                timeout=(3.05, 10),
+            ).json()
 
             # assert: no errors :^)
             # fail if error, pass error message to MopidyError exception
@@ -91,6 +94,10 @@ class MopidyAPI:
             err = f"Mopidy error: {ex}"
             self.logger.error(err)
             raise MopidyError(str(ex))
+        except Timeout as ex:
+            err = f"Mopidy request timed out: {ex}"
+            self.logger.error(err)
+            raise ConnectionError(ex)
         except ConnectionError as ex:
             err = f"Mopidy connection error: {ex} "
             self.logger.error(err)
